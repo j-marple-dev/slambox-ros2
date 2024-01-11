@@ -1,0 +1,12 @@
+run_arg:
+    - --privileged
+    - -e DISPLAY=:0
+    - -e TERM=xterm-256color
+    - -v /tmp/.X11-unix:/tmp/.X11-unix:ro
+    - -v /dev:/dev
+    - --network host
+    - -v ${PWD}:/home/user/ros2_ws/src/slambox-ros2
+build_arg: []
+mount_pwd: true
+default_shell: zsh
+lastexecid: ""
