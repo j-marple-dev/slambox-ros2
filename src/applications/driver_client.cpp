@@ -27,7 +27,7 @@
 namespace sbox {
 
 SLAMBOXDriverClient::SLAMBOXDriverClient(const rclcpp::NodeOptions &options)
-    : Node("slambox_ros2", options), serial_parser_(4096), udp_parser_(131070) {
+    : Node("slambox_ros2_client_node", options), serial_parser_(4096), udp_parser_(131070) {
 
   // declare parameters
   this->declare_parameter<std::string>("serial_communication.port_name",

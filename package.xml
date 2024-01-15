@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package format="3">
+<package format="2">
   <name>slambox_ros2</name>
   <version>0.0.1</version>
   <description>
@@ -21,7 +21,14 @@
   <build_depend>message_generation</build_depend>
 
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
 
   <doc_depend>doxygen</doc_depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 
 </package>
