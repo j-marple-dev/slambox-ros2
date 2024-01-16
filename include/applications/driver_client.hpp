@@ -3,34 +3,31 @@
 /// @copyright 2023 J.Marple
 /// @brief SLAMBOX ROS Driver Client
 
-#ifndef SLAMBOX_ROS_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
-#define SLAMBOX_ROS_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
-
-#include <nav_msgs/msg/detail/odometry__struct.hpp>
-#include <rclcpp/publisher.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/detail/point_cloud2__struct.hpp>
-#include <std_msgs/msg/string.hpp>
-#include <nav_msgs/msg/odometry.hpp>
-#include <sensor_msgs/msg/point_cloud2.hpp>
+#ifndef SLAMBOX_ROS2_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
+#define SLAMBOX_ROS2_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
 
 #include <memory>
 #include <string>
 #include <vector>
 
+#include <nav_msgs/msg/odometry.hpp>
+#include <rclcpp/publisher.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/detail/point_cloud2__struct.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <std_msgs/msg/string.hpp>
+
 #include <sbox/communication/sbox_parser.hpp>
 #include <sbox/communication/serial_communication.hpp>
 #include <sbox/communication/udp_communication.hpp>
-
 
 namespace sbox {
 
 /// @brief SLAMBOX Driver Client
 class SLAMBOXDriverClient : public ParsedMessageInterface, public rclcpp::Node {
-public:
+ public:
   /// @brief Constructor
-  /// @param nh ROS NodeHandle
-  /// @param pnh ROS Private NodeHandle
+  /// @param options ROS2 NodeOptions
   explicit SLAMBOXDriverClient(
       const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
 
@@ -42,7 +39,7 @@ public:
   /// 3 seconds
   bool is_server_alive();
 
-private:
+ private:
   /// @brief Callback function for odometry message
   /// @param odom Odometry message
   ///
@@ -159,6 +156,6 @@ private:
   rclcpp::Clock::SharedPtr clock_;
 };
 
-} // namespace sbox
+}  // namespace sbox
 
-#endif // SLAMBOX_ROS_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
+#endif  // SLAMBOX_ROS2_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_

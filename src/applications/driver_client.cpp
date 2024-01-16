@@ -5,17 +5,15 @@
 
 #include "applications/driver_client.hpp"
 
+#include <chrono>  // NOLINT
+#include <memory>
+
 #include <nav_msgs/msg/detail/odometry__struct.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <std_msgs/msg/detail/string__struct.hpp>
 #include <std_msgs/msg/string.hpp>
 
-#include <chrono> // NOLINT
-#include <memory>
-
-#include "utils/ros_msg_converter.hpp"
-#include "utils/string_utils.hpp"
 #include <sbox/communication/serial_communication.hpp>
 #include <sbox/protocol/acknowledge/ping_protocol.hpp>
 #include <sbox/protocol/base_protocol.hpp>
@@ -23,12 +21,15 @@
 #include <sbox/protocol/request/request_ethernet_communication_config.hpp>
 #include <sbox/protocol/request/request_mavlink_communication_config.hpp>
 #include <sbox/protocol/request/request_serial_communication_config.hpp>
+#include "utils/ros_msg_converter.hpp"
+#include "utils/string_utils.hpp"
 
 namespace sbox {
 
 SLAMBOXDriverClient::SLAMBOXDriverClient(const rclcpp::NodeOptions &options)
-    : Node("slambox_ros2_client_node", options), serial_parser_(4096), udp_parser_(131070) {
-
+    : Node("slambox_ros2_client_node", options),
+      serial_parser_(4096),
+      udp_parser_(131070) {
   // declare parameters
   this->declare_parameter<std::string>("serial_communication.port_name",
                                        "/dev/ttyUSB1");
@@ -158,23 +159,28 @@ void SLAMBOXDriverClient::on_push_pointcloud(
   pointcloud_pub_->publish(pointcloud_msg);
 }
 
+// cppcheck-suppress unusedFunction
 void SLAMBOXDriverClient::on_response_mavlink_communication_config(
     bool enabled, uint32_t baudrate) {
   LOG(INFO) << "[mavlink] " << (enabled ? "Enabled" : "Disabled")
             << ", baudrate: " << baudrate << std::endl;
 }
 
+// cppcheck-suppress unusedFunction
 void SLAMBOXDriverClient::on_response_serial_communication_config(
     bool enabled, uint32_t baudrate) {
   LOG(INFO) << "[serial] " << (enabled ? "Enabled" : "Disabled")
             << ", baudrate: " << baudrate << std::endl;
 }
+//
+// cppcheck-suppress unusedFunction
 void SLAMBOXDriverClient::on_response_ethernet_communication_config(
     bool enabled, uint32_t port) {
   LOG(INFO) << "[ethernet] " << (enabled ? "Enabled" : "Disabled")
             << ", port: " << port << std::endl;
 }
 
+// cppcheck-suppress unusedFunction
 void SLAMBOXDriverClient::on_acknowledge(std::array<uint8_t, 2> requested_mode,
                                          uint8_t status) {
   LOG(INFO) << "[Acknowledge] Requested mode: " << requested_mode[0] << " "
@@ -232,4 +238,4 @@ void SLAMBOXDriverClient::callback_request_(const std_msgs::msg::String &msg) {
     udp_communication_->write(data);
   }
 }
-} // namespace sbox
+}  // namespace sbox

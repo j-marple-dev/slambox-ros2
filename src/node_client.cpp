@@ -18,7 +18,6 @@ int main(int argc, char **argv) {
   FLAGS_colorlogtostderr = true;
   google::InitGoogleLogging(argv[0]);
 
-
   rclcpp::init(argc, argv);
   auto slambox_client_node = std::make_shared<sbox::SLAMBOXDriverClient>();
 
@@ -26,4 +25,3 @@ int main(int argc, char **argv) {
   rclcpp::shutdown();
   return 0;
 }
-

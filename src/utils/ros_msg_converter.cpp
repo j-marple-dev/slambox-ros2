@@ -9,8 +9,7 @@ namespace sbox_msgs {
 nav_msgs::msg::Odometry to_ros_msg(const Odometry &odom) {
   nav_msgs::msg::Odometry odom_msg;
   // odom_msg.header.stamp = ros::Time(odom.timestamp_sec, odom.timestamp_nsec);
-  odom_msg.header.stamp =
-      rclcpp::Time(odom.timestamp_sec, odom.timestamp_nsec);
+  odom_msg.header.stamp = rclcpp::Time(odom.timestamp_sec, odom.timestamp_nsec);
 
   odom_msg.header.frame_id = "camera_init";
   odom_msg.child_frame_id = "body";
@@ -67,4 +66,4 @@ sensor_msgs::msg::PointCloud2 to_ros_msg(const PointCloud2 &pointcloud) {
   return pointcloud_msg;
 }
 
-} // namespace sbox_msgs
+}  // namespace sbox_msgs
