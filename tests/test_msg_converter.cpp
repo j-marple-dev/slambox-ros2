@@ -5,11 +5,12 @@
 
 #include <glog/logging.h>
 #include <gtest/gtest.h>
+
+#include <random>
+
 #include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-
-#include <random>
 
 #include <sbox/sbox_msgs/Odometry.hpp>
 #include <sbox/sbox_msgs/PointCloud2.hpp>
@@ -133,7 +134,8 @@ TEST(MSGConverter, PointCloud2Conversion) {
     }
     pointcloud.is_dense = dis_bool(gen);
 
-    sensor_msgs::msg::PointCloud2 ros_pointcloud = sbox_msgs::to_ros_msg(pointcloud);
+    sensor_msgs::msg::PointCloud2 ros_pointcloud =
+        sbox_msgs::to_ros_msg(pointcloud);
 
     EXPECT_EQ(pointcloud.timestamp_sec, ros_pointcloud.header.stamp.sec);
     EXPECT_EQ(pointcloud.timestamp_nsec, ros_pointcloud.header.stamp.nanosec);
