@@ -5,7 +5,7 @@ slambox_ros2_client_node:
       port_name: "/dev/ttyUSB1"
       baudrate: 921600
 
-    ethrnet_communication:
+    ethernet_communication:
       enabled: false
       server_addr: 192.168.101.101
       port: 21580
