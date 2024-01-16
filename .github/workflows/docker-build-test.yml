@@ -25,7 +25,7 @@ jobs:
           shell: bash
           options: -v ${{ github.workspace }}:/home/user/ros2_ws/src/slambox-ros2
           run: |
-            cd ~/ros2_ws/src/slambox-ros && \
+            cd ~/ros2_ws/src/slambox-ros2 && \
             export PATH=$PATH:/home/user/.local/bin && \
             ./run_check.sh all
 
