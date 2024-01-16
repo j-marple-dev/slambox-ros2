@@ -19,7 +19,7 @@ find_package(glog 0.6.0 REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(yaml-cpp REQUIRED )
 
-find_package(slambox_sdk 0.1.0 REQUIRED)
+find_package(slambox_sdk 0.2.0 REQUIRED)
 
 include_directories(
   include
