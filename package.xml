@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>slambox_ros2</name>
+  <version>0.0.1</version>
+  <description>
+    SLAMBOX ROS2 driver
+  </description>
+  <maintainer email="hekim@jmarple.ai">Haneol Kim</maintainer>
+  <license>Private</license>
+
+  <url>https://jmarple.ai</url>
+  <author>Haneol Kim</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+
+  <build_depend>message_generation</build_depend>
+
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+
+  <doc_depend>doxygen</doc_depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>
