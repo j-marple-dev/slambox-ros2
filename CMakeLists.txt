@@ -29,8 +29,6 @@ include_directories(${YAML_CPP_INCLUDE_DIRS})
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB SOURCES_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_subdirectory("libs/cli")
-
 # Remove executable cpp files
 FOREACH(source_executable ${SOURCES_EXECUTABLE})
     list(REMOVE_ITEM SOURCES ${source_executable})
@@ -51,7 +49,6 @@ FOREACH(source_executable ${SOURCES_EXECUTABLE})
     glog::glog
     ${slambox_sdk_LIBRARIES}
     ZLIB::ZLIB
-    cli::cli
     ${YAML_CPP_LIBRARIES}
   )
 
@@ -74,46 +71,38 @@ install(DIRECTORY config
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
-  
-  ament_add_gtest(${PROJECT_NAME}_test test/)
+
+  set(TEST_NAME_BASE test-${PROJECT_NAME})
+
+  enable_testing()
+
+  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+  FILE(GLOB UNITTEST_LIST CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_*.cpp")
 
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+  
+  FOREACH(unittest_path ${UNITTEST_LIST})
+    get_filename_component(unittest_name ${unittest_path} NAME_WLE)
+    string(REPLACE "test_" "" unittest_name ${unittest_name})
+    set(TEST_NAME ${TEST_NAME_BASE}-${unittest_name})
+
+    message("Build Unit Test for ${unittest_path} with name of ${TEST_NAME}")
+
+    ament_add_gtest(${TEST_NAME} ${unittest_path} ${SOURCES})
+
+    ament_target_dependencies(${TEST_NAME} nav_msgs std_msgs sensor_msgs rclcpp)
+
+    target_link_libraries(${TEST_NAME}
+      gtest
+      gtest_main
+      glog::glog
+      ${slambox_sdk_LIBRARIES}
+      ${YAML_CPP_LIBRARIES}
+    )
+  ENDFOREACH()
 endif()
-
-
-# Unit test
-# if (CATKIN_ENABLE_TESTING)
-#     set(TEST_NAME_BASE test-${PROJECT_NAME})
-#
-#     enable_testing()
-#
-#     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-#
-#     # Auto adding unit test files starting with test_*.cpp
-#     FILE(GLOB UNITTEST_LIST CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_*.cpp")
-#     FOREACH(unittest_path ${UNITTEST_LIST})
-#         get_filename_component(unittest_name ${unittest_path} NAME_WLE)
-#         string(REPLACE "test_" "" unittest_name ${unittest_name})
-#         set(TEST_NAME ${TEST_NAME_BASE}-${unittest_name})
-#
-#         message("Build Unit Test for ${unittest_path} with name of ${TEST_NAME}")
-#
-#         catkin_add_gtest(${TEST_NAME} ${unittest_path} ${SOURCES})
-#
-#         target_link_libraries(${TEST_NAME}
-#             ${catkin_LIBRARIES}
-#             gtest
-#             gtest_main
-#             glog::glog
-#             ${slambox_sdk_LIBRARIES}
-#             cli::cli
-#             ${YAML_CPP_LIBRARIES}
-#         )
-#
-#         add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-#     ENDFOREACH()
-# endif()
 
 ament_package()
