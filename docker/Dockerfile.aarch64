@@ -61,12 +61,17 @@ RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/home/user/.local/lib" >> /ho
 # Install SLAMBOX SDK
 RUN sudo apt-get install -y libserial-dev
 WORKDIR /home/user
-RUN git clone https://github.com/j-marple-dev/slambox-sdk.git -b v0.1.0 && \
+
+RUN git clone https://github.com/j-marple-dev/slambox-sdk.git -b v0.2.0 && \
+
     mkdir -p slambox-sdk/build && \
     cd slambox-sdk/build && \
     cmake -G "Unix Makefiles" .. && \
     make -j && \
     sudo make install
+
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib" >> /home/user/.bashrc
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib" >> /home/user/.zshrc
 
 # Install ROS2 humble pre-requisites
 RUN sudo apt-get purge -y libtbb-dev \
@@ -77,9 +82,10 @@ RUN sudo apt-get purge -y libtbb-dev \
 RUN mkdir -p ~/ros2_ws/src
 COPY --chown=user:user ./ /home/user/ros2_ws/src/slambox_ros2
     
-RUN /bin/bash -c '. /opt/ros/humble/setup.bash; cd ~/ros2_ws; colcon build -j1'
-RUN echo "source ~/catkin_ws/install/setup.bash" >> ~/.bashrc
-RUN echo "source ~/catkin_ws/install/setup.zsh" >> ~/.zshrc
+RUN /bin/bash -c '. /opt/ros/humble/setup.bash; cd ~/ros2_ws; colcon build --parallel-workers 1'
+RUN echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+RUN echo "source ~/ros2_ws/install/setup.zsh" >> ~/.zshrc
+
 RUN rm -rf /home/user/ros2_ws/src
 
 RUN echo "export ROS_MASTER_URI=http://192.168.0.138:11311" >> ~/.zshrc
