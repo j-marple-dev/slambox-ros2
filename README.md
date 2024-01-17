@@ -20,8 +20,8 @@ Table of Contents
 # 1. Getting started
 ## 1.1. Installation
 ### 1.1.1. Requirements
-- [ROS noetic](https://wiki.ros.org/noetic/Installation/Ubuntu) (Recommended)
-- [SLAMBOX-SDK](https://github.com/j-marple-dev/slambox-sdk) (v0.1.0)
+- [ROS humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) (Recommended)
+- [SLAMBOX-SDK](https://github.com/j-marple-dev/slambox-sdk) (v0.2.0)
 - glog (>=v0.6.0)
 - CMake (>= 3.16.3)
 - docker (Optional but highly recommended)
@@ -34,13 +34,13 @@ Table of Contents
 * Our docker image includes development environment. We highly recommend docker system.
     ```shell
     # Clone this repository
-    git clone https://github.com/j-marple-dev/slambox-ros.git --recursive
+    git clone https://github.com/j-marple-dev/slambox-ros2.git
 
     # Change directory
-    cd slambox-ros
+    cd slambox-ros2
 
     # Build docker image
-    docker build . -t jmarpledev/slambox-ros -f docker/Dockerfile  --build-arg UID=$(id -u) --build-arg GID=$(id -u)
+    docker build . -t jmarpledev/slambox-ros2 -f docker/Dockerfile  --build-arg UID=$(id -u) --build-arg GID=$(id -u)
     ```
 
 ### 1.1.3. Local ROS system
@@ -51,14 +51,14 @@ Table of Contents
 
 
 ```shell
-# Assuming that your ROS workspace is ~/catkin_ws
-mkdir -p ~/catkin_ws/src
-cd ~/catkin_ws/src
-git clone https://github.com/j-marple-dev/slambox-ros.git --recursive
+# Assuming that your ROS workspace is ~/ros2_ws
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone https://github.com/j-marple-dev/slambox-ros2.git --recursive
 cd ../
-catkin build slambox_ros
+colcon build slambox_ros
 # Choose the shell which you are using
-source devel/setup.{bash|zsh}
+source install/setup.{bash|zsh}
 ```
 
 ## 1.2. Configuration
@@ -88,28 +88,28 @@ subscribe:
 ### 1.3.1. Local ROS system
 - Running ROS node
     ```shell
-    roslaunch slambox_ros slambox_ros_client.launch
+    ros2 launch slambox_ros2 slambox_ros_client_launch.py
     ```
 
 - Check rostopic in another shell
     ```shell
-    rostopic hz /SLAMBOX/odom /SLAMBOX/pointcloud
+    ros2 topic hz /SLAMBOX/odom /SLAMBOX/pointcloud
     ```
 
 ### 1.3.2. Running on Docker image
 - Run docker container for running SLAMBOX-ROS client
     ```shell
-    docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v /dev:/dev -v $PWD:/home/user/catkin_ws/src/slambox-ros --network host jmarpledev/slambox-ros /usr/bin/zsh
+    docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v /dev:/dev -v $PWD:/home/user/ros2_ws/src/slambox-ros2 --network host jmarpledev/slambox-ros2 /usr/bin/zsh
     ```
 
 - Run docker container for running SLAMBOX-ROS client with rviz visualization
     ```shell
-    docker run -ti --privileged -e TERM=xterm-256color -e DISPLAY=:0 -v /dev:/dev -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v $PWD:/home/user/catkin_ws/src/slambox-ros --network host jmarpledev/slambox-ros /usr/bin/bash -lic "roslaunch slambox_ros slambox_ros_client.launch rviz:=true"
+    docker run -ti --privileged -e TERM=xterm-256color -e DISPLAY=:0 -v /dev:/dev -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v $PWD:/home/user/ros2_ws/src/slambox-ros2 --network host jmarpledev/slambox-ros2 /usr/bin/bash -lic "ros2 launch slambox_ros2 slambox_ros_client_launch.py"
     ```
 
 - Run docker container with shell (For development environment)
     ```shell
-    docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v /dev:/dev -v $PWD:/home/user/catkin_ws/src/slambox-ros --network host jmarpledev/slambox-ros /usr/bin/zsh
+    docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v /dev:/dev -v $PWD:/home/user/ros2_ws/src/slambox-ros2 --network host jmarpledev/slambox-ros2 /usr/bin/zsh
     ```
 
 
@@ -121,6 +121,4 @@ Please visit https://sbox.jmarple.ai for more information.
 
 # 4. External resources
 - [glog](https://github.com/google/glog) - Google Logging Library
-- [fmt](https://github.com/fmtlib/fmt) Modern formatting library
-- [cli](https://github.com/daniele77/cli) - C++ CLI Library
 - [ducker](https://github.com/JeiKeiLim/ducker) - Docker Helper CLI application
