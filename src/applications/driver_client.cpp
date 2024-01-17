@@ -75,9 +75,7 @@ SLAMBOXDriverClient::SLAMBOXDriverClient(const rclcpp::NodeOptions &options)
       this->create_publisher<nav_msgs::msg::Odometry>(publish_odom_topic_, 1);
   pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
       publish_pointcloud_topic_, 1);
-  // request_sub_ = nh_.subscribe(subscribe_request_topic_, 1,
-  //                              &SLAMBOXDriverClient::callback_request_,
-  //                              this);
+
   request_sub_ = this->create_subscription<std_msgs::msg::String>(
       subscribe_request_topic_, 1,
       std::bind(&SLAMBOXDriverClient::callback_request_, this,
