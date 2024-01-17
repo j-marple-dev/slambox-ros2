@@ -76,6 +76,9 @@ RUN git clone https://github.com/j-marple-dev/slambox-sdk.git -b v0.2.0 --recurs
     make -j && \
     sudo make install
 
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib" >> /home/user/.bashrc
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib" >> /home/user/.zshrc
+
 # Install ROS2 humble pre-requisites
 RUN sudo apt-get update && sudo apt-get install -y python3-rosdep ros-humble-pluginlib python3-colcon-common-extensions
 
