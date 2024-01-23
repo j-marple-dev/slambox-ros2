@@ -6,14 +6,20 @@
 #ifndef SLAMBOX_ROS2_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
 #define SLAMBOX_ROS2_INCLUDE_APPLICATIONS_DRIVER_CLIENT_HPP_
 
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+
+#include <chrono>  // NOLINT
+#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <nav_msgs/msg/odometry.hpp>
+#include <rclcpp/duration.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/detail/point_cloud2__struct.hpp>
+#include <rclcpp/time.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -152,8 +158,20 @@ class SLAMBOXDriverClient : public ParsedMessageInterface, public rclcpp::Node {
   /// @brief Last ping time. This is used to check if server is alive.
   std::chrono::system_clock::time_point last_ping_time_;
 
+  /// @brief check the function is called
+  bool have_called_ = false;
+
   /// @brief ROS2 clock
   rclcpp::Clock::SharedPtr clock_;
+
+  /// @brief timestamp
+  rclcpp::Time cur_pcl_timestamp_;
+
+  /// @brief current timestamp pointcloud
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cur_pcl_;
+
+  /// @brief current message for metadata
+  sensor_msgs::msg::PointCloud2 cur_pcl_msg_;
 };
 
 }  // namespace sbox

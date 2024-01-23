@@ -59,7 +59,8 @@ RUN git clone https://github.com/doxygen/doxygen.git -b Release_1_9_8 \
     && make -j \
     && sudo make install
 
-RUN sudo apt-get purge -y libtbb-dev
+RUN sudo apt-get purge -y libtbb-dev && \
+    sudo apt-get install -y ros-humble-pcl-ros ros-humble-pcl-conversions libpcl-dev libeigen3-dev
 
 RUN sudo usermod -aG dialout user
 
