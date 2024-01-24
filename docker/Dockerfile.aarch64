@@ -76,7 +76,8 @@ RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib" >> /home/user
 # Install ROS2 humble pre-requisites
 RUN sudo apt-get purge -y libtbb-dev \
     && sudo apt-get update \
-    && sudo apt-get install -y python3-rosdep ros-humble-pluginlib python3-colcon-common-extensions
+    && sudo apt-get install -y python3-rosdep ros-humble-pluginlib python3-colcon-common-extensions \
+    && sudo apt-get install -y ros-humble-pcl-ros ros-humble-pcl-conversions libpcl-dev libeigen3-dev
 
 # Pre-build ROS nodes
 RUN mkdir -p ~/ros2_ws/src
