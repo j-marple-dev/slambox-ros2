@@ -4,8 +4,20 @@ project(slambox_ros2)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 ## Compile as C++17, supported in ROS Kinetic and newer
-add_compile_options(-std=c++17 -O3)
+# add_compile_options(-std=c++17 -O3)
+
+if (NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -fexceptions -g -ggdb")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -18,6 +30,10 @@ find_package(nav_msgs REQUIRED)
 find_package(glog 0.6.0 REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(yaml-cpp REQUIRED )
+find_package(rclcpp_components REQUIRED)
+find_package(PCL REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(pcl_ros REQUIRED)
 
 find_package(slambox_sdk 0.2.0 REQUIRED)
 
@@ -25,6 +41,9 @@ include_directories(
   include
 )
 include_directories(${YAML_CPP_INCLUDE_DIRS})
+include_directories(${EIGEN3_INCLUDE_DIR} ${PCL_INCLUDE_DIRS} ${pcl_conversions_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 file(GLOB SOURCES_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
@@ -45,17 +64,17 @@ FOREACH(source_executable ${SOURCES_EXECUTABLE})
   )
 
   target_link_libraries(${executable_name}
-    ${catkin_LIBRARIES}
     glog::glog
     ${slambox_sdk_LIBRARIES}
     ZLIB::ZLIB
     ${YAML_CPP_LIBRARIES}
+    ${PCL_LIBRARIES}
   )
 
   target_include_directories(${executable_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include
     $<INSTALL_INTERFACE:include>)
   
-  ament_target_dependencies(${executable_name} rclcpp std_msgs sensor_msgs nav_msgs)
+  ament_target_dependencies(${executable_name} rclcpp std_msgs sensor_msgs nav_msgs rclcpp_components pcl_ros pcl_conversions PCL)
 
   install(TARGETS
     ${executable_name}
@@ -93,7 +112,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(${TEST_NAME} ${unittest_path} ${SOURCES})
 
-    ament_target_dependencies(${TEST_NAME} nav_msgs std_msgs sensor_msgs rclcpp)
+    ament_target_dependencies(${TEST_NAME} nav_msgs std_msgs sensor_msgs rclcpp PCL)
 
     target_link_libraries(${TEST_NAME}
       gtest
@@ -101,6 +120,7 @@ if(BUILD_TESTING)
       glog::glog
       ${slambox_sdk_LIBRARIES}
       ${YAML_CPP_LIBRARIES}
+      ${PCL_LIBRARIES}
     )
   ENDFOREACH()
 endif()

@@ -5,13 +5,16 @@
 
 #include "applications/driver_client.hpp"
 
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl_conversions/pcl_conversions.h>
+
 #include <chrono>  // NOLINT
 #include <memory>
 
-#include <nav_msgs/msg/detail/odometry__struct.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <rclcpp/qos.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <std_msgs/msg/detail/string__struct.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include <sbox/communication/serial_communication.hpp>
@@ -71,15 +74,19 @@ SLAMBOXDriverClient::SLAMBOXDriverClient(const rclcpp::NodeOptions &options)
   this->get_parameter_or<std::string>(
       "subscribe/request_topic", subscribe_request_topic_, "/SLAMBOX/request");
 
+  // rclcpp::QoS qos = rclcpp::QoS(rclcpp::KeepLast(20)).best_effort();
+
   odom_pub_ =
-      this->create_publisher<nav_msgs::msg::Odometry>(publish_odom_topic_, 1);
+      this->create_publisher<nav_msgs::msg::Odometry>(publish_odom_topic_, 10);
   pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
-      publish_pointcloud_topic_, 1);
+      publish_pointcloud_topic_, rclcpp::SystemDefaultsQoS());
 
   request_sub_ = this->create_subscription<std_msgs::msg::String>(
       subscribe_request_topic_, 1,
       std::bind(&SLAMBOXDriverClient::callback_request_, this,
                 std::placeholders::_1));
+
+  cur_pcl_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
 
   clock_ = this->get_clock();
 
@@ -154,7 +161,29 @@ void SLAMBOXDriverClient::on_push_pointcloud(
     const sbox_msgs::PointCloud2 &pointcloud) {
   sensor_msgs::msg::PointCloud2 pointcloud_msg =
       sbox_msgs::to_ros_msg(pointcloud);
-  pointcloud_pub_->publish(pointcloud_msg);
+
+  if (!have_called_) {
+    cur_pcl_timestamp_ = pointcloud_msg.header.stamp;
+    pcl::fromROSMsg(pointcloud_msg, *this->cur_pcl_);
+    this->cur_pcl_msg_ = pointcloud_msg;
+    have_called_ = true;
+  }
+  if (cur_pcl_timestamp_ == pointcloud_msg.header.stamp) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud =
+        std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    pcl::fromROSMsg(pointcloud_msg, *cloud);
+    *this->cur_pcl_ += *cloud;
+  } else {
+    cur_pcl_timestamp_ = pointcloud_msg.header.stamp;
+    sensor_msgs::msg::PointCloud2 concat_pcl_msg;
+    pcl::toROSMsg(*this->cur_pcl_, concat_pcl_msg);
+    concat_pcl_msg.header = cur_pcl_msg_.header;
+    pointcloud_pub_->publish(concat_pcl_msg);
+
+    // cur_pcl_.reset();
+    pcl::fromROSMsg(pointcloud_msg, *this->cur_pcl_);
+    this->cur_pcl_msg_ = pointcloud_msg;
+  }
 }
 
 // cppcheck-suppress unusedFunction
@@ -170,7 +199,7 @@ void SLAMBOXDriverClient::on_response_serial_communication_config(
   LOG(INFO) << "[serial] " << (enabled ? "Enabled" : "Disabled")
             << ", baudrate: " << baudrate << std::endl;
 }
-//
+
 // cppcheck-suppress unusedFunction
 void SLAMBOXDriverClient::on_response_ethernet_communication_config(
     bool enabled, uint32_t port) {
@@ -192,6 +221,7 @@ void SLAMBOXDriverClient::on_acknowledge(std::array<uint8_t, 2> requested_mode,
 bool SLAMBOXDriverClient::is_server_alive() {
   std::chrono::duration<double> dt =
       std::chrono::system_clock::now() - last_ping_time_;
+  // LOG(INFO) << "Server live check: " << dt.count();
   if (dt.count() > 3.0) {
     return false;
   }
