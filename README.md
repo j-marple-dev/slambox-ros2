@@ -52,13 +52,12 @@ Table of Contents
 
 - **SLAMBOX-SDK**: Please follow installation instruction on https://github.com/j-marple-dev/slambox-sdk
 
-- PCL, PCL conversions, PCL ros
-    ```shell
-    sudo apt install -y libpcl-dev ros-humble-pcl-ros ros-humble-pcl-conversions
-    ```
-
+- Install PCL, PCL conversions, PCL ROS
 
 ```shell
+# Install requirements first
+sudo apt install -y libpcl-dev ros-humble-pcl-ros ros-humble-pcl-conversions
+
 # Assuming that your ROS workspace is ~/ros2_ws
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
