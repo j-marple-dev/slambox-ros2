@@ -23,6 +23,9 @@ Table of Contents
 - [ROS humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) (Recommended)
 - [SLAMBOX-SDK](https://github.com/j-marple-dev/slambox-sdk) (v0.2.0)
 - glog (>=v0.6.0)
+- PCL (tested on v1.12.0)
+- ros PCL
+- ros PCL conversions
 - CMake (>= 3.16.3)
 - docker (Optional but highly recommended)
 - `dialout` group permission. Use below command to include `dialout` group to your linux account for UART communication.
@@ -47,10 +50,14 @@ Table of Contents
 
 #### Pre-requisite
 
-- **SLAMBOX-SDK**: Please follow installation instruction on https://github.com/j-marple-dev/slambox-sdk 
+- **SLAMBOX-SDK**: Please follow installation instruction on https://github.com/j-marple-dev/slambox-sdk
 
+- Install PCL, PCL conversions, PCL ROS
 
 ```shell
+# Install requirements first
+sudo apt install -y libpcl-dev ros-humble-pcl-ros ros-humble-pcl-conversions
+
 # Assuming that your ROS workspace is ~/ros2_ws
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
