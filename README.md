@@ -63,7 +63,7 @@ mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
 git clone https://github.com/j-marple-dev/slambox-ros2.git --recursive
 cd ../
-colcon build slambox_ros
+colcon build --packages-select slambox_ros2
 # Choose the shell which you are using
 source install/setup.{bash|zsh}
 ```
